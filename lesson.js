@@ -1,5 +1,6 @@
 /* ============================================================
    Musalingo — lesson.js (Complete)
+   Fixes: SVG pieces showing, chess sounds playing, topic fallback.
    ============================================================ */
 
 const savedTheme = JSON.parse(localStorage.getItem('MusalingoSettings') || '{}');
@@ -68,7 +69,7 @@ window.addEventListener('orientationchange', () => {
 const SVG_PIECES = {
     wK: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linejoin="miter"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5" fill="#fff" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-3.5-7.5-13-10.5-16-4-3 6 5 10 5 10V37z" fill="#fff"/><path d="M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0" stroke="#000"/></g></svg>`,
     wQ: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM24.5 7.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM41 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM16 8.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM33 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/><path d="M9 26c8.5-1.5 21-1.5 27 0l2-12-7 11V11l-5.5 13.5-3-15-3 15-5.5-14V25L7 14l2 12z" stroke-linecap="butt"/><path d="M9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z" stroke-linecap="butt"/><path d="M11.5 30c3.5-1 18.5-1 22 0M12 33.5c6-1 15-1 21 0" fill="none"/></g></svg>`,
-    wR: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14V9h4v2h5V9h5v2h5V9h4v5" stroke-linecap="butt"/><path d="M34 14l-3 3H14l-3-3"/><path d="M31 17v12.5H14V17" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M31 29.5l1.5 2.5h-20l1.5-2.5"/><path d="M11 14h23" fill="none" stroke-linejoin="miter"/></g></svg>`,
+    wR: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14V9h4v2h5V9h5v2h5V9h4v5" stroke-linecap="butt"/><path d="M34 14l-3 3H14l-3--3"/><path d="M31 17v12.5H14V17" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M31 29.5l1.5 2.5h-20l1.5-2.5"/><path d="M11 14h23" fill="none" stroke-linejoin="miter"/></g></svg>`,
     wB: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="#fff" stroke-linecap="butt"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/></g><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke-linejoin="miter"/></g></svg>`,
     wN: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H15c0-9 10-6.5 8-21" fill="#fff"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003 1-4-4 0-2 6-12 6-12s1.89-1.9 2-3.5c-.73-.994-.5-2-.5-3 1-1 3 2.5 3 2.5h2s.78-1.992 2.5-3c1 0 1 3 1 3" fill="#fff"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM14.933 15.75a.5 1.5 30 1 1-.866-.5.5 1.5 30 0 1 .866.5z" fill="#000" stroke="#000"/></g></svg>`,
     wP: `<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg>`,
@@ -88,15 +89,106 @@ function generateLocalFallbackQuestions(language, topic, count = 10) {
     const fallbackTopic = String(topic || 'daily practice');
 
     if (fallbackLanguage === 'Chess') {
+        const CHESS_TOPIC_POOLS = {
+            'piece movement': [
+                { fen: '7k/8/8/8/4K3/8/8/8 w - - 0 1', from: 'e4', answer: 'e5', prompt: 'The king is highlighted. Tap a square where it can move.', hint: 'The king moves one square in any direction.' },
+                { fen: 'k7/8/8/8/3Q4/8/8/7K w - - 0 1', from: 'd4', answer: 'd5', prompt: 'The queen is highlighted. Tap a square where it can move.', hint: 'The queen moves in straight or diagonal lines.' },
+                { fen: '7k/8/8/8/8/8/8/K5N1 w - - 0 1', from: 'g1', answer: 'f3', prompt: 'The knight is highlighted. Tap a square where it can move.', hint: 'A knight moves in an L-shape.' }
+            ],
+            'capturing and attacking': [
+                { fen: '7k/8/8/8/4K3/8/3p4/8 w - - 0 1', from: 'e4', answer: 'd3', prompt: 'The king is highlighted. Tap the pawn it can capture.', hint: 'The king captures one square diagonally.' },
+                { fen: 'k7/8/8/8/8/8/3q4/7K w - - 0 1', from: 'h1', answer: 'h2', prompt: 'The king is in danger. Tap a square it can move to.', hint: 'Move away from the queen\'s attack line.' },
+                { fen: '7k/8/8/8/8/8/3N4/7K w - - 0 1', from: 'd2', answer: 'e4', prompt: 'The knight is highlighted. Tap the square it can attack.', hint: 'Knights attack in L-shapes.' }
+            ],
+            'defending your pieces': [
+                { fen: '7k/8/8/8/8/8/3N4/3K4 w - - 0 1', from: 'd1', answer: 'd2', prompt: 'The king can defend its knight. Tap the square next to it.', hint: 'Kings defend adjacent squares.' },
+                { fen: '7k/8/8/8/8/8/8/R6K w - - 0 1', from: 'a1', answer: 'a8', prompt: 'Move the rook to a square where it defends the king.', hint: 'Rooks move in straight lines.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd1', prompt: 'The queen can defend the king. Tap a square next to it.', hint: 'Queens defend in straight or diagonal lines.' }
+            ],
+            'check': [
+                { fen: 'k7/8/8/8/8/8/8/7K w - - 0 1', from: 'h1', answer: 'a1', prompt: 'The queen is highlighted. Tap the square that puts the black king in check.', hint: 'Check = attacking the king.' },
+                { fen: 'k7/8/8/8/8/8/8/R6K w - - 0 1', from: 'a1', answer: 'a8', prompt: 'The rook is highlighted. Tap the square that puts the black king in check.', hint: 'Rooks check along files and ranks.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The queen is highlighted. Tap the square that puts the black king in check.', hint: 'Queens check along files.' }
+            ],
+            'checkmate': [
+                { fen: 'k7/8/8/8/8/8/8/7K w - - 0 1', from: 'a1', answer: 'a8', prompt: 'The queen is highlighted. Tap the square that delivers checkmate.', hint: 'Checkmate = king in check with no escape.' },
+                { fen: 'k7/8/8/8/8/8/R7/7K w - - 0 1', from: 'a2', answer: 'a8', prompt: 'The rook is highlighted. Tap the square that delivers checkmate.', hint: 'Rooks mate along the back rank.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The queen is highlighted. Tap the square that delivers checkmate.', hint: 'Queens dominate the back rank.' }
+            ],
+            'stalemate': [
+                { fen: 'k7/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd1', prompt: 'Move the queen to a square that stalemates the black king.', hint: 'Stalemate = no legal move, but king is not in check.' },
+                { fen: 'k7/8/8/8/8/8/8/R6K w - - 0 1', from: 'a1', answer: 'h1', prompt: 'Move the rook to a square that stalemates the black king.', hint: 'Stalemate happens when the king has no legal moves.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd7', prompt: 'Move the queen to a square that stalemates the black king.', hint: 'Stalemate is a draw — king has no legal moves.' }
+            ],
+            'forks': [
+                { fen: '7k/8/8/8/8/8/3N4/7K w - - 0 1', from: 'd2', answer: 'e4', prompt: 'The knight can fork the king and the rook. Tap the forking square.', hint: 'Forks = attack two pieces at once.' },
+                { fen: '7k/8/8/8/8/8/3N4/3q4 w - - 0 1', from: 'd2', answer: 'c4', prompt: 'The knight can fork the king and queen. Tap the forking square.', hint: 'Knights make great forking pieces.' },
+                { fen: '7k/8/8/8/8/8/3N4/7R w - - 0 1', from: 'd2', answer: 'f3', prompt: 'The knight can fork. Tap the forking square.', hint: 'Find the L-shape that attacks two pieces.' }
+            ],
+            'pins': [
+                { fen: '7k/8/8/8/8/8/3R4/7K w - - 0 1', from: 'd2', answer: 'd7', prompt: 'The rook pins the pawn to the king. Tap the pinning square.', hint: 'Pins = attack a piece so it cannot move.' },
+                { fen: '7k/8/8/8/8/8/3B4/7K w - - 0 1', from: 'd2', answer: 'g5', prompt: 'The bishop pins the pawn. Tap the pinning square.', hint: 'Bishops pin along diagonals.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The queen can pin. Tap the pinning square.', hint: 'Queens pin along files.' }
+            ],
+            'skewers': [
+                { fen: '7k/8/8/8/8/8/3R4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The rook skewers the king. Tap the skewer square.', hint: 'Skewers = attack the king, capture the piece behind.' },
+                { fen: '7k/8/8/8/8/8/3B4/7K w - - 0 1', from: 'd2', answer: 'g5', prompt: 'The bishop can skewer. Tap the skewer square.', hint: 'Bishops skewer along diagonals.' },
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The queen skewers. Tap the skewer square.', hint: 'Queens skewer along files.' }
+            ],
+            'starting the game': [
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'e2', answer: 'e4', prompt: 'The pawn is highlighted. Tap a square where it can move.', hint: 'Pawns move forward one square, or two from their starting rank.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'g1', answer: 'f3', prompt: 'The knight is highlighted. Tap a square where it can move.', hint: 'Knights develop early in the game.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'd2', answer: 'd4', prompt: 'The pawn is highlighted. Tap a square where it can move.', hint: 'Control the center with central pawns.' }
+            ],
+            'opening': [
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'e2', answer: 'e4', prompt: 'The pawn is highlighted. Tap the opening move.', hint: 'King\'s pawn opening.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'd2', answer: 'd4', prompt: 'The pawn is highlighted. Tap the opening move.', hint: 'Queen\'s pawn opening.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'g1', answer: 'f3', prompt: 'The knight is highlighted. Tap the developing move.', hint: 'Knights develop before bishops.' }
+            ],
+            'endgame': [
+                { fen: '7k/8/8/8/8/8/4P3/4K3 w - - 0 1', from: 'e2', answer: 'e4', prompt: 'The pawn is highlighted. Push it toward the promotion square.', hint: 'Push the pawn, escort with the king.' },
+                { fen: '7k/8/8/8/8/8/8/3QK3 w - - 0 1', from: 'd1', answer: 'd8', prompt: 'The queen can move to checkmate. Tap the square.', hint: 'Checkmate in one with a lone queen.' },
+                { fen: '7k/8/8/8/8/8/3R4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'The rook mates the black king. Tap the square.', hint: 'Rooks mate along the back rank.' }
+            ],
+            'opening traps': [
+                { fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 2', from: 'f1', answer: 'c4', prompt: 'The bishop is highlighted. Tap the aggressive move.', hint: 'The Italian Game attacks the weak f7 pawn.' },
+                { fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 2', from: 'f1', answer: 'b5', prompt: 'The bishop is highlighted. Tap the aggressive move.', hint: 'The Ruy López pressures the knight on c6.' },
+                { fen: 'rnbqkbnr/ppp2ppp/8/3pp3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3', from: 'f3', answer: 'g5', prompt: 'The knight is highlighted. Tap the attacking move.', hint: 'Knights hunt for forking squares.' }
+            ],
+            'match': [
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'e2', answer: 'e4', prompt: 'Start the game. Tap the pawn\'s opening square.', hint: 'Control the center.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'd2', answer: 'd4', prompt: 'Start the game. Tap the pawn\'s opening square.', hint: 'Control the center with d4.' },
+                { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1', from: 'g1', answer: 'f3', prompt: 'Start the game. Tap the knight\'s developing square.', hint: 'Knights first.' }
+            ],
+            'puzzle': [
+                { fen: '7k/8/8/8/8/8/3Q4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'Tap the square that delivers checkmate.', hint: 'Queens dominate back ranks.' },
+                { fen: '7k/8/8/8/8/8/3R4/7K w - - 0 1', from: 'd2', answer: 'd8', prompt: 'Tap the square that delivers checkmate.', hint: 'Rooks mate along the back rank.' },
+                { fen: '7k/8/8/8/8/8/3N4/7K w - - 0 1', from: 'd2', answer: 'e4', prompt: 'Tap the forking square.', hint: 'Fork the king and the rook.' }
+            ]
+        };
+
+        const topicLower = String(fallbackTopic || '').toLowerCase();
+        let pool = null;
+        for (const key of Object.keys(CHESS_TOPIC_POOLS)) {
+            if (topicLower.includes(key)) { pool = CHESS_TOPIC_POOLS[key]; break; }
+        }
+        if (!pool) pool = CHESS_TOPIC_POOLS['piece movement'];
+
+        const lessonNumMatch = String(fallbackTopic || '').match(/(\d+)\s*$/);
+        const rotationOffset = lessonNumMatch ? Number(lessonNumMatch[1]) : 0;
+
         const boardQuestions = [];
-        const samples = [
-            { fen: '7k/8/8/8/4K3/8/8/8 w - - 0 1', from: 'e4', answer: 'e5', prompt: 'The king is highlighted. Tap a square where it can move.', hint: 'The king moves one square in any direction.' },
-            { fen: 'k7/8/8/8/3Q4/8/8/7K w - - 0 1', from: 'd4', answer: 'd5', prompt: 'The queen is highlighted. Tap a square where it can move.', hint: 'The queen moves in straight or diagonal lines.' },
-            { fen: '7k/8/8/8/8/8/8/K5N1 w - - 0 1', from: 'g1', answer: 'f3', prompt: 'The knight is highlighted. Tap a square where it can move.', hint: 'A knight moves in an L-shape.' }
-        ];
         for (let i = 0; i < count; i++) {
-            const sample = samples[i % samples.length];
-            boardQuestions.push({ type: 'find-move', fen: sample.fen, from: sample.from, answer: sample.answer, prompt: sample.prompt, hint: sample.hint });
+            const idx = (i + rotationOffset) % pool.length;
+            const sample = pool[idx];
+            boardQuestions.push({
+                type: 'find-move',
+                fen: sample.fen,
+                from: sample.from,
+                answer: sample.answer,
+                prompt: sample.prompt,
+                hint: sample.hint
+            });
         }
         return boardQuestions;
     }
@@ -108,20 +200,33 @@ function generateLocalFallbackQuestions(language, topic, count = 10) {
             if (i % 3 === 0) result.push({ type: 'multiple-choice', question: `${a} + ${b} = ?`, answer: String(answer), distractors: [String(answer - 1), String(answer + 2), String(answer + 5)], hint: 'Add the numbers.' });
             else if (i % 3 === 1) {
                 const first = a + 1, second = first + 1, third = second + 1, fourth = third + 1;
-                result.push({
-                    type: 'match-pairs', pairs: [
-                        { left: `${first} + ${first}`, right: String(first * 2) },
-                        { left: `${second} + ${second}`, right: String(second * 2) },
-                        { left: `${third} + ${third}`, right: String(third * 2) },
-                        { left: `${fourth} + ${fourth}`, right: String(fourth * 2) }
-                    ], hint: 'Solve each expression, then match equal values.'
-                });
+                result.push({ type: 'match-pairs', pairs: [
+                    { left: `${first} + ${first}`, right: String(first * 2) },
+                    { left: `${second} + ${second}`, right: String(second * 2) },
+                    { left: `${third} + ${third}`, right: String(third * 2) },
+                    { left: `${fourth} + ${fourth}`, right: String(fourth * 2) }
+                ], hint: 'Solve each expression, then match equal values.' });
             } else result.push({ type: 'slider', question: `Set the answer: ${a} + ${b} = ?`, answer, min: 0, max: answer + 5, step: 1, hint: 'Add the numbers.' });
         }
         return result;
     }
 
+    // --- ENGLISH & MUSIC & TELUGU & OTHER LANGUAGES ---
     const languageSamples = {
+        English: [
+            { phrase: 'Hello', pronunciation: 'hello', answer: 'Hello', distractors: ['Goodbye', 'Book', 'Happy'], translationMap: { Hello: 'hello', Goodbye: 'goodbye', Book: 'book', Happy: 'happy' } },
+            { phrase: 'Thank you', pronunciation: 'thank you', answer: 'Thank you', distractors: ['Friend', 'Water', 'House'], translationMap: { 'Thank you': 'thank you', Friend: 'friend', Water: 'water', House: 'house' } },
+            { phrase: 'Friend', pronunciation: 'friend', answer: 'Friend', distractors: ['Table', 'Water', 'House'], translationMap: { Friend: 'friend', Table: 'table', Water: 'water', House: 'house' } },
+            { phrase: 'School', pronunciation: 'school', answer: 'School', distractors: ['Apple', 'Happy', 'Run'], translationMap: { School: 'school', Apple: 'apple', Happy: 'happy', Run: 'run' } },
+            { phrase: 'Book', pronunciation: 'book', answer: 'Book', distractors: ['Door', 'Hello', 'Sun'], translationMap: { Book: 'book', Door: 'door', Hello: 'hello', Sun: 'sun' } }
+        ],
+        Music: [
+            { phrase: 'Do', pronunciation: 'doe', answer: 'Do', distractors: ['Re', 'Mi', 'Fa'], translationMap: { Do: 'doe', Re: 'ray', Mi: 'mee', Fa: 'fah' } },
+            { phrase: 'Re', pronunciation: 'ray', answer: 'Re', distractors: ['Mi', 'Fa', 'Sol'], translationMap: { Re: 'ray', Mi: 'mee', Fa: 'fah', Sol: 'sole' } },
+            { phrase: 'Mi', pronunciation: 'mee', answer: 'Mi', distractors: ['Fa', 'Sol', 'La'], translationMap: { Mi: 'mee', Fa: 'fah', Sol: 'sole', La: 'lah' } },
+            { phrase: 'Fa', pronunciation: 'fah', answer: 'Fa', distractors: ['Sol', 'La', 'Ti'], translationMap: { Fa: 'fah', Sol: 'sole', La: 'lah', Ti: 'tee' } },
+            { phrase: 'Sol', pronunciation: 'sole', answer: 'Sol', distractors: ['La', 'Ti', 'Do'], translationMap: { Sol: 'sole', La: 'lah', Ti: 'tee', Do: 'doe' } }
+        ],
         Japanese: [
             { phrase: 'こんにちは', pronunciation: 'konnichiwa', answer: 'こんにちは', distractors: ['ありがとう', '学校', '猫'], translationMap: { 'こんにちは': 'hello', 'ありがとう': 'thanks', '学校': 'school', '猫': 'cat' } },
             { phrase: 'ありがとう', pronunciation: 'arigatou', answer: 'ありがとう', distractors: ['水', '友達', '本'], translationMap: { 'ありがとう': 'thanks', '水': 'water', '友達': 'friend', '本': 'book' } },
@@ -294,14 +399,14 @@ const completionXp = document.getElementById('completionXp');
 
 function shuffle(arr) {
     const c = [...arr];
-    for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[c[i], c[j]] = [c[j], c[i]]; }
+    for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
     return c;
 }
 
 function normalizeLanguageName(language) {
     const value = String(language || '').trim();
     if (!value) return 'English';
-    const map = { telugu: 'Telugu', japanese: 'Japanese', spanish: 'Spanish', french: 'French', german: 'German', italian: 'Italian', arabic: 'Arabic', hindi: 'Hindi', english: 'English', chinese: 'Chinese', korean: 'Korean', portuguese: 'Portuguese', russian: 'Russian', turkish: 'Turkish' };
+    const map = { telugu: 'Telugu', japanese: 'Japanese', spanish: 'Spanish', french: 'French', german: 'German', italian: 'Italian', arabic: 'Arabic', hindi: 'Hindi', english: 'English', chinese: 'Chinese', korean: 'Korean', portuguese: 'Portuguese', russian: 'Russian', turkish: 'Turkish', music: 'Music' };
     return map[value.toLowerCase()] || value;
 }
 
@@ -381,12 +486,12 @@ function renderHeartGate() {
         const amount = Math.min(requestedAmount, HEART_CAP - profile.hearts);
         const cost = amount * 10;
         if (amount <= 0) { window.location.reload(); return; }
-        if (profile.diamonds < cost) { refillMessage.textContent = `Need ${cost - profile.diamonds} more diamonds.`; SFX.error(); return; }
+        if (profile.diamonds < cost) { refillMessage.textContent = `Need ${cost - profile.diamonds} more diamonds.`; playSound('error'); return; }
         profile.diamonds -= cost;
         profile.hearts += amount;
         if (profile.hearts === HEART_CAP) delete profile.heartRefillAt;
         saveProfile(profile);
-        SFX.gemEarned();
+        playSound('gemEarned');
         window.location.reload();
     };
     document.getElementById('buyOneHeartBtn').addEventListener('click', () => buyHearts(1));
@@ -862,7 +967,7 @@ if (!course || !lesson) {
                 let selectedSquare = null;
 
                 const LIGHT = getComputedStyle(document.documentElement).getPropertyValue('--light').trim() || '#ebecd0';
-                const DARK = getComputedStyle(document.documentElement).getPropertyValue('--dark').trim() || '#739552';
+                const DARK  = getComputedStyle(document.documentElement).getPropertyValue('--dark').trim()  || '#739552';
 
                 for (let r = 0; r < 8; r++) {
                     for (let c = 0; c < 8; c++) {
@@ -888,27 +993,24 @@ if (!course || !lesson) {
 
                         const pc = board[sq];
                         if (pc && SVG_PIECES[pc]) {
-                            // FIX: Use absolute positioning with inset to force it to fill the square perfectly
                             const wrap = document.createElement('div');
                             wrap.className = 'piece';
                             wrap.style.cssText = 'position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;';
                             wrap.innerHTML = SVG_PIECES[pc];
-
-                            // Force the SVG itself to scale inside the absolute wrapper
+                            
                             const svg = wrap.querySelector('svg');
                             if (svg) {
                                 svg.style.width = '85%';
                                 svg.style.height = '85%';
                                 svg.style.display = 'block';
                             }
-
+                            
                             s.appendChild(wrap);
                         }
 
                         s.addEventListener('click', () => {
                             if (locked) return;
 
-                            // STEP 1 — select a piece
                             if (!selectedSquare) {
                                 if (!board[sq]) {
                                     playSound('click');
@@ -925,7 +1027,6 @@ if (!course || !lesson) {
                                 return;
                             }
 
-                            // Deselect on same square
                             if (sq === selectedSquare) {
                                 const sel = boardEl.querySelector(`[data-square="${selectedSquare}"]`);
                                 if (sel) {
@@ -940,7 +1041,6 @@ if (!course || !lesson) {
                                 return;
                             }
 
-                            // STEP 2 — commit answer
                             locked = true;
                             const correct = sq === q.answer;
                             const selEl = boardEl.querySelector(`[data-square="${selectedSquare}"]`);
@@ -967,9 +1067,11 @@ if (!course || !lesson) {
 
                             const capturedPiece = board[q.answer]?.[1];
                             if (correct) {
-                                playSound('correct');
-                                if (capturedPiece) {
-                                    setTimeout(() => playSound('capture', capturedPiece), 150);
+                                playSound('correct'); 
+                                if (!capturedPiece) {
+                                    setTimeout(() => playSound('move'), 200);
+                                } else {
+                                    setTimeout(() => playSound('capture', capturedPiece), 200);
                                 }
                             } else {
                                 playSound('wrong');
@@ -989,7 +1091,6 @@ if (!course || !lesson) {
                 setTimeout(fitBoards, 50);
                 setTimeout(fitBoards, 250);
             }
-             
 
             /* ============ DISPATCHER ============ */
 
