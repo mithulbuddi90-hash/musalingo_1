@@ -32,11 +32,11 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDOuk93FEgHkCmkcme34Pq2Ct-vTYsUh5o",
-    authDomain: "log-in-app-99d1f.firebaseapp.com",
+    apiKey: "UR API HERE",
+    authDomain: "logthu-in-app-99d1f.firebaseapp.com",
     databaseURL: "https://log-in-app-99d1f-default-rtdb.firebaseio.com",
-    projectId: "log-in-app-99d1f",
-    storageBucket: "log-in-app-99d1f.firebasestorage.app",
+    projectId: "logthu-in-app-99d1f",
+    storageBucket: "logthu-in-app-99d1f.firebasestorage.app",
     messagingSenderId: "870479641576",
     appId: "1:870479641576:web:46add0ffb4cc72f999025d"
 };
